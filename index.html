@@ -5,22 +5,28 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Manillas de oro laminado 18k</title>
 <meta name="description" content="Catálogo de manillas en oro laminado 18k. Pide la tuya por WhatsApp.">
-<meta name="theme-color" content="#0B0B0B">
+<meta name="theme-color" content="#0A0908">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><rect width='24' height='24' rx='5' fill='%230B0B0B'/><path fill='none' stroke='%23C9A54C' stroke-width='1.6' stroke-linejoin='round' d='M4 9l3.8 3.4L12 6.5l4.2 5.9L20 9l-1.7 8.5H5.7L4 9Z'/></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/base.css">
 <link rel="stylesheet" href="css/catalogo.css">
 </head>
 <body>
 
-<header class="header">
+<div class="anuncio">
+  <div class="anuncio-pista">
+    <span>Oro laminado 18k</span><i>◆</i><span>Envíos a todo Colombia</span><i>◆</i><span>Garantía de calidad</span><i>◆</i><span>Atención personalizada por WhatsApp</span>
+  </div>
+</div>
+
+<header class="header" id="header">
   <div class="contenedor">
     <nav class="nav nav-izq">
       <button class="menu-btn" id="menuBtn" aria-label="Abrir menú"><svg><use href="#i-menu"/></svg></button>
       <a href="#inicio">Inicio</a>
-      <a href="#catalogo">Catálogo</a>
+      <a href="#catalogo">Colección</a>
     </nav>
     <a href="#inicio" class="logo" aria-label="Inicio">
       <svg><use href="#i-corona"/></svg>
@@ -36,20 +42,28 @@
 
 <div class="menu-movil" id="menuMovil">
   <a href="#inicio">Inicio</a>
-  <a href="#catalogo">Catálogo</a>
+  <a href="#catalogo">Colección</a>
   <a href="#contacto">Contacto</a>
 </div>
 
 <section class="hero" id="inicio">
   <div class="contenedor">
-    <div>
-      <div class="eyebrow">Manillas de oro laminado 18k</div>
-      <h1>Elegancia <em>que brilla</em> contigo</h1>
-      <p>Diseños únicos para cada momento. Calidad, estilo y detalles que duran.</p>
-      <a href="#catalogo" class="btn-dorado">Ver catálogo <svg width="16" height="16"><use href="#i-flecha"/></svg></a>
+    <div class="hero-texto">
+      <div class="eyebrow"><span class="eyebrow-linea"></span>Colección de oro laminado 18k</div>
+      <h1>Elegancia<br><em>que brilla</em> contigo</h1>
+      <p>Piezas pensadas para acompañarte todos los días. Brillo, calidad y detalles que duran.</p>
+      <div class="hero-acciones">
+        <a href="#catalogo" class="btn-dorado">Descubrir la colección <svg width="16" height="16"><use href="#i-flecha"/></svg></a>
+        <a href="#" class="enlace-sutil" data-wa-general>Asesoría por WhatsApp</a>
+      </div>
     </div>
-    <div class="hero-imagen" id="heroImagen"></div>
+    <div class="hero-visual">
+      <div class="hero-marco"></div>
+      <div class="hero-imagen" id="heroImagen"></div>
+      <div class="hero-sello"><strong>18k</strong><span>Oro laminado</span></div>
+    </div>
   </div>
+  <a href="#catalogo" class="hero-scroll" aria-label="Ir a la colección"><span></span></a>
 </section>
 
 <section class="beneficios">
@@ -64,8 +78,8 @@
   <div class="contenedor">
     <div class="titulo-seccion">
       <div class="eyebrow">Nuestras colecciones</div>
-      <h2>Encuentra tu estilo</h2>
-      <div class="linea"></div>
+      <h2>Encuentra <em>tu estilo</em></h2>
+      <div class="ornamento"><span></span><i></i><span></span></div>
     </div>
     <div class="filtros" id="filtros"></div>
     <div class="grilla cargando" id="grilla">
@@ -73,6 +87,15 @@
     </div>
   </div>
 </main>
+
+<section class="manifiesto">
+  <div class="contenedor">
+    <div class="ornamento"><span></span><i></i><span></span></div>
+    <blockquote>“Una joya no se lleva puesta, <em>se lleva contigo</em>.”</blockquote>
+    <p>¿No sabes cuál elegir o buscas un regalo? Te asesoramos personalmente por WhatsApp.</p>
+    <a href="#" class="btn-borde" data-wa-general><svg width="18" height="18"><use href="#i-wa"/></svg>Hablar con un asesor</a>
+  </div>
+</section>
 
 <footer class="footer" id="contacto">
   <div class="contenedor">
@@ -83,7 +106,7 @@
     </a>
     <nav class="footer-nav">
       <a href="#inicio">Inicio</a>
-      <a href="#catalogo">Catálogo</a>
+      <a href="#catalogo">Colección</a>
       <a href="#" data-wa-general>Contacto</a>
     </nav>
     <div class="redes" id="redes"></div>

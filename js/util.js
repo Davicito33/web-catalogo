@@ -54,8 +54,8 @@ export function semilla(texto) {
 }
 
 // Pone la foto si existe; si no carga, deja el dibujo de ejemplo
-export function ponerImagen(contenedor, src, alt, variante) {
-  contenedor.insertAdjacentHTML("afterbegin", dibujoManilla(variante));
+export function ponerImagen(contenedor, src, alt, variante, ancho, alto) {
+  contenedor.insertAdjacentHTML("afterbegin", dibujoManilla(variante, ancho, alto));
   if (!src) return;
   const img = new Image();
   img.alt = alt;

@@ -33,7 +33,7 @@ function aplicarAjustes() {
 
   const hero = document.getElementById("heroImagen");
   hero.innerHTML = "";
-  ponerImagen(hero, ajustes.imagen_portada, "Manilla de oro laminado 18k", 2);
+  ponerImagen(hero, ajustes.imagen_portada, "Manilla de oro laminado 18k", 2, 400, 500);
 }
 
 function pintarFiltros() {
@@ -59,22 +59,28 @@ function pintarProductos() {
       ? `Hola, ¿cuándo vuelve a estar disponible la ${p.nombre}?`
       : `Hola, me interesa la ${p.nombre} - ${formatoPrecio(p.precio)}`;
     const tarjeta = document.createElement("article");
-    tarjeta.className = "tarjeta";
+    tarjeta.className = "tarjeta" + (agotado ? " es-agotado" : "");
+    const enlace = esc(linkWA(ajustes.whatsapp, mensaje));
+    const categoria = CATEGORIAS.find(c => c.id === p.categoria);
     tarjeta.style.animationDelay = `${Math.min(i, 8) * 60}ms`;
     tarjeta.innerHTML = `
       <div class="tarjeta-img">
         ${p.etiqueta ? `<span class="etiqueta${agotado ? " agotado" : ""}">${esc(p.etiqueta)}</span>` : ""}
+        <a class="tarjeta-rapido" href="${enlace}" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">
+          <svg><use href="#i-wa"/></svg>${agotado ? "Avísame" : "Pedir ahora"}
+        </a>
       </div>
       <div class="tarjeta-info">
+        ${categoria ? `<span class="tarjeta-cat">${esc(categoria.nombre)}</span>` : ""}
         <h3>${esc(p.nombre)}</h3>
         ${p.descripcion ? `<p class="tarjeta-desc">${esc(p.descripcion)}</p>` : ""}
         ${p.medida ? `<span class="tarjeta-medida"><svg><use href="#i-regla"/></svg>${esc(p.medida)}</span>` : ""}
         <div class="precio">${formatoPrecio(p.precio)}</div>
-        <a class="btn-wa${agotado ? " secundario" : ""}" href="${esc(linkWA(ajustes.whatsapp, mensaje))}" target="_blank" rel="noopener">
-          <svg><use href="#i-wa"/></svg>${agotado ? "Avísame cuando llegue" : "Comprar por WhatsApp"}
+        <a class="btn-wa${agotado ? " secundario" : ""}" href="${enlace}" target="_blank" rel="noopener">
+          <svg><use href="#i-wa"/></svg>${agotado ? `Avísame<span class="solo-escritorio"> cuando llegue</span>` : `Comprar<span class="solo-escritorio"> por WhatsApp</span>`}
         </a>
       </div>`;
-    ponerImagen(tarjeta.querySelector(".tarjeta-img"), p.imagen_url, p.nombre, semilla(p.id || p.nombre));
+    ponerImagen(tarjeta.querySelector(".tarjeta-img"), p.imagen_url, p.nombre, semilla(p.id || p.nombre), 400, 500);
     grilla.appendChild(tarjeta);
   });
 }
@@ -91,6 +97,24 @@ const menuMovil = document.getElementById("menuMovil");
 document.getElementById("menuBtn").addEventListener("click", () => menuMovil.classList.toggle("abierto"));
 menuMovil.addEventListener("click", e => { if (e.target.tagName === "A") menuMovil.classList.remove("abierto"); });
 document.getElementById("anio").textContent = new Date().getFullYear();
+
+// El encabezado se compacta al bajar
+const header = document.getElementById("header");
+const marcarHeader = () => header.classList.toggle("con-sombra", window.scrollY > 40);
+window.addEventListener("scroll", marcarHeader, { passive: true });
+marcarHeader();
+
+// Las secciones aparecen suavemente al llegar a ellas
+const observador = "IntersectionObserver" in window
+  ? new IntersectionObserver(entradas => entradas.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add("visible"); observador.unobserve(e.target); }
+    }), { threshold: 0.15 })
+  : null;
+document.querySelectorAll(".beneficios, .titulo-seccion, .manifiesto .contenedor").forEach(el => {
+  if (!observador) return;
+  el.classList.add("revelar");
+  observador.observe(el);
+});
 
 async function iniciar() {
   try {
