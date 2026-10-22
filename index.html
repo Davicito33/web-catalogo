@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manillas de oro laminado 18k</title>
+<meta name="description" content="Catálogo de manillas en oro laminado 18k. Pide la tuya por WhatsApp.">
+<meta name="theme-color" content="#0B0B0B">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><rect width='24' height='24' rx='5' fill='%230B0B0B'/><path fill='none' stroke='%23C9A54C' stroke-width='1.6' stroke-linejoin='round' d='M4 9l3.8 3.4L12 6.5l4.2 5.9L20 9l-1.7 8.5H5.7L4 9Z'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/catalogo.css">
+</head>
+<body>
+
+<header class="header">
+  <div class="contenedor">
+    <nav class="nav nav-izq">
+      <button class="menu-btn" id="menuBtn" aria-label="Abrir menú"><svg><use href="#i-menu"/></svg></button>
+      <a href="#inicio">Inicio</a>
+      <a href="#catalogo">Catálogo</a>
+    </nav>
+    <a href="#inicio" class="logo" aria-label="Inicio">
+      <svg><use href="#i-corona"/></svg>
+      <div class="logo-nombre" data-marca>TU MARCA</div>
+      <div class="logo-sub">JOYERÍA 18K</div>
+    </a>
+    <nav class="nav nav-der">
+      <a href="#contacto" class="texto">Contacto</a>
+      <a href="#" data-wa-general aria-label="Escríbenos por WhatsApp"><svg class="icono-wa"><use href="#i-wa"/></svg></a>
+    </nav>
+  </div>
+</header>
+
+<div class="menu-movil" id="menuMovil">
+  <a href="#inicio">Inicio</a>
+  <a href="#catalogo">Catálogo</a>
+  <a href="#contacto">Contacto</a>
+</div>
+
+<section class="hero" id="inicio">
+  <div class="contenedor">
+    <div>
+      <div class="eyebrow">Manillas de oro laminado 18k</div>
+      <h1>Elegancia <em>que brilla</em> contigo</h1>
+      <p>Diseños únicos para cada momento. Calidad, estilo y detalles que duran.</p>
+      <a href="#catalogo" class="btn-dorado">Ver catálogo <svg width="16" height="16"><use href="#i-flecha"/></svg></a>
+    </div>
+    <div class="hero-imagen" id="heroImagen"></div>
+  </div>
+</section>
+
+<section class="beneficios">
+  <div class="contenedor">
+    <div class="beneficio"><svg><use href="#i-diamante"/></svg><div><strong>Oro laminado 18k</strong><span>Brillo y calidad que perduran</span></div></div>
+    <div class="beneficio"><svg><use href="#i-escudo"/></svg><div><strong>Garantía de calidad</strong><span>Tu satisfacción es nuestra prioridad</span></div></div>
+    <div class="beneficio"><svg><use href="#i-camion"/></svg><div><strong>Envíos a todo el país</strong><span>Recíbela en la puerta de tu casa</span></div></div>
+  </div>
+</section>
+
+<main class="catalogo" id="catalogo">
+  <div class="contenedor">
+    <div class="titulo-seccion">
+      <div class="eyebrow">Nuestras colecciones</div>
+      <h2>Encuentra tu estilo</h2>
+      <div class="linea"></div>
+    </div>
+    <div class="filtros" id="filtros"></div>
+    <div class="grilla cargando" id="grilla">
+      <div class="tarjeta-esqueleto"></div><div class="tarjeta-esqueleto"></div><div class="tarjeta-esqueleto"></div>
+    </div>
+  </div>
+</main>
+
+<footer class="footer" id="contacto">
+  <div class="contenedor">
+    <a href="#inicio" class="logo">
+      <svg><use href="#i-corona"/></svg>
+      <div class="logo-nombre" data-marca>TU MARCA</div>
+      <div class="logo-sub">JOYERÍA 18K</div>
+    </a>
+    <nav class="footer-nav">
+      <a href="#inicio">Inicio</a>
+      <a href="#catalogo">Catálogo</a>
+      <a href="#" data-wa-general>Contacto</a>
+    </nav>
+    <div class="redes" id="redes"></div>
+  </div>
+  <p class="copy">© <span id="anio"></span> <span data-marca>TU MARCA</span>. Todos los derechos reservados.</p>
+</footer>
+
+<a href="#" class="wa-flotante" data-wa-general aria-label="Escríbenos por WhatsApp"><svg><use href="#i-wa"/></svg></a>
+
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

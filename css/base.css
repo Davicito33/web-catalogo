@@ -1,0 +1,80 @@
+/* ================================================================
+   BASE — colores, tipografías y estilos compartidos
+   Cambia aquí los colores de la marca y se aplican en toda la página
+   ================================================================ */
+:root {
+  --negro: #0B0B0B;
+  --negro-2: #141312;
+  --negro-3: #1C1A17;
+  --negro-4: #25221D;
+  --dorado: #C9A54C;
+  --dorado-claro: #E8D5A3;
+  --crema: #F5F1E8;
+  --gris: #A39E93;
+  --rojo: #E07A6B;
+  --verde: #8FC79A;
+  --borde: rgba(201, 165, 76, 0.28);
+  --borde-suave: rgba(201, 165, 76, 0.14);
+  --fuente-titulos: 'Cormorant Garamond', Georgia, serif;
+  --fuente-texto: 'Montserrat', Arial, sans-serif;
+  --radio: 14px;
+  --degradado-dorado: linear-gradient(135deg, var(--dorado-claro), var(--dorado));
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--negro);
+  color: var(--crema);
+  font-family: var(--fuente-texto);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+img { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+button, input, select, textarea { font-family: inherit; font-size: inherit; color: inherit; }
+button { cursor: pointer; }
+
+.contenedor { width: min(1180px, 100% - 32px); margin-inline: auto; }
+
+.eyebrow { font-size: 11px; letter-spacing: .32em; text-transform: uppercase; color: var(--dorado); }
+
+/* Logo */
+.logo { text-align: center; line-height: 1; display: inline-block; }
+.logo svg { width: 22px; height: 22px; margin: 0 auto 4px; color: var(--dorado); display: block; }
+.logo-nombre {
+  font-family: var(--fuente-titulos); font-size: 26px; font-weight: 500;
+  letter-spacing: .14em; color: var(--dorado-claro); text-transform: uppercase;
+}
+.logo-sub { font-size: 8.5px; letter-spacing: .5em; color: var(--dorado); margin-top: 5px; }
+
+/* Botones */
+.btn-dorado {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  background: var(--degradado-dorado); color: #1A1407;
+  border: 0; border-radius: 8px; font-weight: 600;
+  padding: 13px 22px; transition: filter .2s, transform .2s, box-shadow .2s;
+}
+.btn-dorado:hover { filter: brightness(1.07); transform: translateY(-1px); }
+.btn-dorado:disabled { opacity: .55; cursor: wait; transform: none; }
+.btn-borde {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  background: transparent; color: var(--dorado-claro);
+  border: 1px solid var(--borde); border-radius: 8px; padding: 12px 20px; font-weight: 500;
+  transition: border-color .2s, color .2s, background .2s;
+}
+.btn-borde:hover { border-color: var(--dorado); color: var(--crema); }
+
+/* Aviso flotante */
+.toast {
+  position: fixed; left: 50%; bottom: 24px; z-index: 200;
+  transform: translate(-50%, 20px); opacity: 0; pointer-events: none;
+  background: var(--negro-3); color: var(--crema); border: 1px solid var(--borde);
+  border-radius: 10px; padding: 12px 20px; font-size: 14px;
+  box-shadow: 0 14px 40px rgba(0,0,0,.6); transition: opacity .25s, transform .25s;
+  max-width: calc(100% - 32px);
+}
+.toast.visible { opacity: 1; transform: translate(-50%, 0); }
+.toast.error { border-color: var(--rojo); color: #F6CFC8; }
+
+.oculto { display: none !important; }

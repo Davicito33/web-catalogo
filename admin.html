@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel de administración</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0B0B0B">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><rect width='24' height='24' rx='5' fill='%230B0B0B'/><path fill='none' stroke='%23C9A54C' stroke-width='1.6' stroke-linejoin='round' d='M4 9l3.8 3.4L12 6.5l4.2 5.9L20 9l-1.7 8.5H5.7L4 9Z'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/admin.css">
+</head>
+<body class="admin">
+
+<!-- ============ INICIO DE SESIÓN ============ -->
+<section class="login oculto" id="vistaLogin">
+  <div class="login-caja">
+    <div class="logo">
+      <svg><use href="#i-corona"/></svg>
+      <div class="logo-nombre" data-marca>TU MARCA</div>
+      <div class="logo-sub">JOYERÍA 18K</div>
+    </div>
+    <h1>Panel de administración</h1>
+    <p>Ingresa para gestionar tus productos</p>
+    <form id="formLogin">
+      <div class="campo">
+        <label for="correo">Correo</label>
+        <input id="correo" type="email" autocomplete="username" required>
+      </div>
+      <div class="campo">
+        <label for="clave">Contraseña</label>
+        <input id="clave" type="password" autocomplete="current-password" required>
+      </div>
+      <p class="login-error" id="loginError"></p>
+      <button class="btn-dorado" type="submit">Entrar</button>
+    </form>
+    <a href="index.html" class="volver">← Volver al catálogo</a>
+  </div>
+</section>
+
+<!-- ============ PANEL ============ -->
+<div class="oculto" id="vistaPanel">
+  <header class="barra">
+    <div class="contenedor">
+      <div class="logo">
+        <svg><use href="#i-corona"/></svg>
+        <div class="logo-nombre" data-marca>TU MARCA</div>
+        <div class="logo-sub">ADMINISTRACIÓN</div>
+      </div>
+      <div class="barra-acciones">
+        <span class="usuario" id="usuario"></span>
+        <a href="index.html" target="_blank" class="btn-borde"><span class="texto-largo">Ver catálogo</span><span class="texto-corto">Ver</span></a>
+        <button class="btn-borde" id="btnSalir">Salir</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="aviso-demo oculto" id="avisoDemo">
+    <div class="contenedor">
+      <span><strong>Modo demo:</strong> los cambios se guardan solo en este navegador. Conecta Supabase para publicarlos de verdad.</span>
+      <button id="btnReiniciarDemo">Restaurar ejemplos</button>
+    </div>
+  </div>
+
+  <main class="panel contenedor">
+    <nav class="pestanas">
+      <button class="pestana activa" data-pestana="productos">Productos</button>
+      <button class="pestana" data-pestana="ajustes">Ajustes de la tienda</button>
+    </nav>
+
+    <!-- Productos -->
+    <section id="pestanaProductos">
+      <div class="herramientas">
+        <div class="campo"><input id="buscar" type="search" placeholder="Buscar por nombre…" aria-label="Buscar"></div>
+        <div class="campo chico"><select id="filtroCategoria" aria-label="Categoría"></select></div>
+        <button class="btn-dorado" id="btnNuevo"><svg width="16" height="16"><use href="#i-mas"/></svg>Nuevo producto</button>
+      </div>
+      <p class="resumen" id="resumen"></p>
+      <div class="lista" id="lista"></div>
+    </section>
+
+    <!-- Ajustes -->
+    <section id="pestanaAjustes" class="oculto">
+      <form class="ajustes" id="formAjustes">
+        <fieldset>
+          <legend>Tu marca</legend>
+          <div class="form-grid">
+            <div class="campo">
+              <label for="ajMarca">Nombre de la marca</label>
+              <input id="ajMarca" name="marca" required maxlength="40">
+            </div>
+            <div class="campo">
+              <label for="ajWhatsapp">WhatsApp de ventas</label>
+              <input id="ajWhatsapp" name="whatsapp" inputmode="tel" required placeholder="573001234567">
+              <small>Con indicativo del país (57 para Colombia), sin + ni espacios.</small>
+            </div>
+            <div class="campo ancho">
+              <label for="ajMensaje">Mensaje del botón general de WhatsApp</label>
+              <textarea id="ajMensaje" name="mensaje_general" rows="2"></textarea>
+            </div>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend>Redes sociales</legend>
+          <div class="form-grid">
+            <div class="campo ancho"><label for="ajInstagram">Instagram</label><input id="ajInstagram" name="instagram" type="url" placeholder="https://instagram.com/tumarca"></div>
+            <div class="campo"><label for="ajFacebook">Facebook</label><input id="ajFacebook" name="facebook" type="url" placeholder="https://facebook.com/tumarca"></div>
+            <div class="campo"><label for="ajTiktok">TikTok</label><input id="ajTiktok" name="tiktok" type="url" placeholder="https://tiktok.com/@tumarca"></div>
+          </div>
+          <small style="display:block;margin-top:10px;color:var(--gris);font-size:12px">Deja vacía la red que no uses y no aparecerá en la página.</small>
+        </fieldset>
+        <fieldset>
+          <legend>Foto de portada</legend>
+          <label class="zona-foto" id="zonaPortada">
+            <span class="zona-texto">Toca o arrastra una foto aquí</span>
+            <input type="file" accept="image/*" id="archivoPortada">
+          </label>
+          <div class="foto-acciones"><span style="color:var(--gris)">Ideal: foto horizontal con fondo oscuro.</span><button type="button" id="quitarPortada">Quitar foto</button></div>
+        </fieldset>
+        <button class="btn-dorado" type="submit" id="btnGuardarAjustes">Guardar ajustes</button>
+      </form>
+    </section>
+  </main>
+</div>
+
+<!-- ============ FORMULARIO DE PRODUCTO ============ -->
+<dialog class="modal" id="modalProducto">
+  <form id="formProducto" method="dialog">
+    <div class="modal-cabeza">
+      <h2 id="tituloModal">Nuevo producto</h2>
+      <button type="button" class="icono-btn" id="btnCerrarModal" aria-label="Cerrar"><svg><use href="#i-cerrar"/></svg></button>
+    </div>
+    <div class="modal-cuerpo">
+      <div>
+        <label class="zona-foto" id="zonaFoto">
+          <span class="zona-texto"><svg width="18" height="18" style="vertical-align:-4px;margin-right:6px"><use href="#i-foto"/></svg>Subir foto</span>
+          <input type="file" accept="image/*" id="archivoFoto">
+        </label>
+        <div class="foto-acciones"><span style="color:var(--gris)">JPG o PNG</span><button type="button" id="quitarFoto">Quitar foto</button></div>
+      </div>
+      <div class="form-grid">
+        <div class="campo ancho">
+          <label for="pNombre">Nombre *</label>
+          <input id="pNombre" required maxlength="80" placeholder="Manilla Eslabón Cubano">
+        </div>
+        <div class="campo ancho">
+          <label for="pDescripcion">Descripción corta</label>
+          <textarea id="pDescripcion" rows="2" maxlength="160" placeholder="Eslabón grueso, broche de seguridad."></textarea>
+        </div>
+        <div class="campo">
+          <label for="pPrecio">Precio (COP) *</label>
+          <input id="pPrecio" inputmode="numeric" required placeholder="95.000">
+        </div>
+        <div class="campo">
+          <label for="pMedida">Medida</label>
+          <input id="pMedida" maxlength="40" placeholder="19 cm / Ajustable">
+        </div>
+        <div class="campo">
+          <label for="pCategoria">Categoría</label>
+          <select id="pCategoria"></select>
+        </div>
+        <div class="campo">
+          <label for="pEtiqueta">Etiqueta</label>
+          <select id="pEtiqueta"></select>
+        </div>
+        <div class="campo">
+          <label for="pOrden">Orden en el catálogo</label>
+          <input id="pOrden" type="number" min="0" step="1">
+          <small>Los números menores aparecen primero.</small>
+        </div>
+        <div class="campo" style="align-content:center">
+          <label class="interruptor"><input type="checkbox" id="pVisible" checked> Visible en el catálogo</label>
+        </div>
+      </div>
+    </div>
+    <div class="modal-pie">
+      <button type="button" class="btn-borde" id="btnCancelar">Cancelar</button>
+      <button type="submit" class="btn-dorado" id="btnGuardarProducto">Guardar producto</button>
+    </div>
+  </form>
+</dialog>
+
+<script type="module" src="js/admin.js"></script>
+</body>
+</html>
