@@ -30,7 +30,7 @@ create table if not exists public.ajustes (
   imagen_portada  text
 );
 insert into public.ajustes (id, marca, whatsapp)
-values (1, 'TU MARCA', '573000000000')
+values (1, 'MAJO JOYERÍA', '573000000000')
 on conflict (id) do nothing;
 
 -- 3. Administradores (solo estos usuarios pueden editar) -------------

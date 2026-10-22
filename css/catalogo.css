@@ -60,17 +60,6 @@ body > * { position: relative; z-index: 1; }
 .menu-btn { display: none; background: none; border: 0; color: var(--dorado); }
 .menu-btn svg { width: 24px; height: 24px; }
 
-.menu-movil {
-  display: none; position: fixed; inset: 70px 0 auto 0; z-index: 49;
-  background: rgba(10,9,8,.97); border-bottom: 1px solid var(--borde); padding: 12px 24px 24px;
-}
-.menu-movil.abierto { display: block; animation: bajar .3s ease; }
-@keyframes bajar { from { opacity: 0; transform: translateY(-8px); } }
-.menu-movil a {
-  display: block; padding: 16px 0; font-family: var(--fuente-titulos); font-size: 22px; letter-spacing: .06em;
-  border-bottom: 1px solid var(--borde-suave);
-}
-
 /* Portada */
 .hero {
   position: relative; overflow: hidden;
@@ -320,8 +309,6 @@ body > * { position: relative; z-index: 1; }
   .header .contenedor, .header.con-sombra .contenedor { height: 66px; }
   .nav-izq a, .nav-der a.texto { display: none; }
   .menu-btn { display: block; }
-  .menu-movil { inset: 100px 0 auto 0; }
-  .header.con-sombra ~ .menu-movil { inset: 66px 0 auto 0; }
   .logo-nombre { font-size: 21px; }
 
   .hero .contenedor { grid-template-columns: 1fr; min-height: 0; padding-block: 44px 72px; gap: 44px; }
@@ -367,3 +354,128 @@ body > * { position: relative; z-index: 1; }
   *, *::before, *::after { animation: none !important; transition: none !important; }
   .revelar { opacity: 1; transform: none; }
 }
+
+/* ================================================================
+   LOGO DE LA MARCA + NAVEGACIÓN CÓMODA EN CELULAR
+   ================================================================ */
+.header .logo { display: flex; align-items: center; gap: 14px; text-align: left; }
+.header .logo-emblema { width: 52px; height: 52px; margin: 0; transition: width .4s, height .4s; }
+.header.con-sombra .logo-emblema { width: 44px; height: 44px; }
+.header .logo-nombre { font-size: 24px; }
+.header .logo-sub { letter-spacing: .42em; }
+.footer .logo-emblema { width: 72px; height: 72px; }
+body.sin-scroll { overflow: hidden; }
+
+/* Menú del celular: pantalla completa, letras grandes y fáciles de tocar */
+.menu-movil {
+  position: fixed; inset: 0; z-index: 45; display: flex; flex-direction: column; gap: 28px;
+  padding: 120px 28px max(28px, env(safe-area-inset-bottom));
+  background: rgba(10,9,8,.98); border: 0; overflow-y: auto;
+  opacity: 0; visibility: hidden; transition: opacity .35s, visibility .35s;
+}
+.menu-movil.abierto { display: flex; opacity: 1; visibility: visible; animation: none; }
+.menu-movil-links a, .menu-movil a {
+  display: block; padding: 14px 0; font-family: var(--fuente-titulos); font-size: 30px; font-weight: 300;
+  letter-spacing: .02em; border-bottom: 1px solid var(--borde-suave);
+}
+.menu-movil-cats .eyebrow { margin-bottom: 8px; }
+.menu-movil-cats #menuCats { display: flex; flex-wrap: wrap; gap: 10px; }
+.menu-movil-cats #menuCats a {
+  font-family: var(--fuente-texto); font-size: 11px; letter-spacing: .2em; text-transform: uppercase;
+  padding: 12px 18px; border: 1px solid var(--borde); border-bottom: 1px solid var(--borde); color: var(--dorado-claro);
+}
+.menu-movil .btn-dorado { margin-top: auto; font-family: var(--fuente-texto); font-size: 11.5px; font-weight: 600; letter-spacing: .18em; padding: 18px; border: 0; }
+.menu-btn { position: relative; z-index: 2; width: 44px; height: 44px; display: none; place-items: center; margin-left: -10px; }
+
+/* Botón "ver detalles" sobre la foto */
+.tarjeta-img, .tarjeta-nombre { cursor: pointer; }
+.tarjeta-nombre { background: none; border: 0; padding: 0; font: inherit; color: inherit; text-align: inherit; }
+.tarjeta-ver {
+  position: absolute; top: 12px; right: 12px; z-index: 3; width: 36px; height: 36px; border-radius: 50%;
+  display: grid; place-items: center; background: rgba(10,9,8,.7); border: 1px solid var(--borde); color: var(--dorado-claro);
+  transition: background .3s, color .3s;
+}
+.tarjeta-ver svg { width: 16px; height: 16px; }
+.tarjeta-ver:hover { background: var(--dorado); color: #1A1407; }
+
+/* Vista de detalle: ventana en computador, hoja que sube desde abajo en celular */
+.vista-rapida { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 24px; }
+.vista-rapida[hidden] { display: none; }
+.vr-fondo { position: absolute; inset: 0; background: rgba(0,0,0,.72); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); opacity: 0; transition: opacity .3s; }
+.vr-caja {
+  position: relative; width: min(880px, 100%); max-height: calc(100dvh - 48px); overflow-y: auto;
+  display: grid; grid-template-columns: 1fr 1fr; background: var(--negro-2); border: 1px solid var(--borde);
+  opacity: 0; transform: translateY(20px) scale(.98); transition: opacity .3s, transform .3s;
+}
+.vista-rapida.abierta .vr-fondo { opacity: 1; }
+.vista-rapida.abierta .vr-caja { opacity: 1; transform: none; }
+.vr-img { position: relative; aspect-ratio: 4 / 5; background: #0F0E0C; overflow: hidden; }
+.vr-img svg, .vr-img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.vr-info { padding: 48px 40px; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; }
+.vr-info h3 { font-family: var(--fuente-titulos); font-weight: 300; font-size: 38px; line-height: 1.1; }
+.vr-desc { color: #CFC8B8; font-weight: 300; margin-top: 14px; }
+.vr-desc:empty, .vr-info .tarjeta-medida:empty, .vr-info .tarjeta-cat:empty { display: none; }
+.vr-info .precio { font-size: 30px; margin: 20px 0 26px; }
+.vr-info .precio::before { display: none; }
+.vr-info .btn-dorado { width: 100%; }
+.vr-nota { font-size: 12px; color: var(--gris); margin-top: 14px; font-weight: 300; }
+.vr-cerrar {
+  position: absolute; top: 12px; right: 12px; z-index: 4; width: 44px; height: 44px; border-radius: 50%;
+  display: grid; place-items: center; background: rgba(10,9,8,.75); border: 1px solid var(--borde); color: var(--crema);
+}
+.vr-cerrar svg { width: 18px; height: 18px; }
+
+@media (max-width: 760px) {
+  .menu-btn { display: grid; }
+  .header .logo { gap: 10px; }
+  .header .logo-emblema, .header.con-sombra .logo-emblema { width: 38px; height: 38px; }
+  .header .logo-nombre { font-size: 17px; letter-spacing: .1em; }
+  .header .logo-sub { font-size: 7px; letter-spacing: .36em; margin-top: 4px; }
+  .nav-der a[data-wa-general] { width: 44px; height: 44px; display: grid; place-items: center; margin-right: -10px; }
+
+  /* Portada más corta para llegar rápido a los productos */
+  .hero .contenedor { padding-block: 36px 48px; gap: 32px; }
+  .hero h1 { font-size: 46px; }
+  .hero p { font-size: 14px; }
+  .hero-acciones { flex-direction: column; align-items: stretch; gap: 16px; text-align: center; }
+  .hero .btn-dorado { width: 100%; padding: 18px; }
+  .enlace-sutil { align-self: center; padding-block: 8px; }
+  .hero-imagen { aspect-ratio: 4 / 3; }
+
+  /* Colecciones en una sola fila deslizable que acompaña al bajar */
+  .filtros {
+    position: sticky; top: 66px; z-index: 20; flex-wrap: nowrap; justify-content: flex-start;
+    overflow-x: auto; scrollbar-width: none; gap: 8px; margin: 0 -16px 28px; padding: 10px 16px;
+    background: rgba(10,9,8,.92); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--borde-suave);
+  }
+  .filtros::-webkit-scrollbar { display: none; }
+  .filtro {
+    flex-shrink: 0; min-height: 40px; padding: 0 18px; border: 1px solid var(--borde-suave); border-radius: 999px;
+    font-size: 10px; letter-spacing: .18em;
+  }
+  .filtro::after { display: none; }
+  .filtro.activo { background: var(--degradado-dorado); color: #1A1407; border-color: transparent; font-weight: 600; }
+  .titulo-seccion { margin-bottom: 24px; }
+
+  .btn-wa { min-height: 44px; }
+  .tarjeta-ver { width: 32px; height: 32px; top: 8px; right: 8px; }
+
+  .vista-rapida { padding: 0; align-items: end; }
+  .vr-caja {
+    grid-template-columns: 1fr; max-height: 92dvh; border-width: 1px 0 0; border-radius: 18px 18px 0 0;
+    transform: translateY(100%);
+  }
+  .vista-rapida.abierta .vr-caja { transform: none; }
+  .vr-img { aspect-ratio: 1 / 1; }
+  .vr-info { padding: 24px 22px max(24px, env(safe-area-inset-bottom)); }
+  .vr-info h3 { font-size: 30px; }
+  .vr-info .precio { font-size: 26px; margin: 14px 0 18px; }
+  .vr-info .btn-dorado { padding: 18px; }
+}
+
+/* Ajustes finos */
+.menu-movil { background: #0A0908; }
+.menu-movil .btn-dorado { display: flex; gap: 12px; }
+body.sin-scroll .wa-flotante { opacity: 0; pointer-events: none; }
+.vr-info .precio::after { display: none; }

@@ -41,7 +41,7 @@ button { cursor: pointer; }
 
 /* Logo */
 .logo { text-align: center; line-height: 1; display: inline-block; }
-.logo svg { width: 22px; height: 22px; margin: 0 auto 4px; color: var(--dorado); display: block; }
+.logo-emblema { width: 56px; height: 56px; margin: 0 auto 10px; display: block; object-fit: contain; }
 .logo-nombre {
   font-family: var(--fuente-titulos); font-size: 26px; font-weight: 500;
   letter-spacing: .14em; color: var(--dorado-claro); text-transform: uppercase;

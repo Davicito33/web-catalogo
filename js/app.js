@@ -43,6 +43,9 @@ function pintarFiltros() {
   filtrosEl.innerHTML = lista.map(c =>
     `<button class="filtro${c.id === filtroActual ? " activo" : ""}" data-cat="${c.id}">${esc(c.nombre)}</button>`
   ).join("");
+  // Las mismas colecciones como accesos directos en el menú del celular
+  document.getElementById("menuCats").innerHTML = lista.map(c =>
+    `<a href="#catalogo" data-cat="${c.id}">${esc(c.nombre)}</a>`).join("");
 }
 
 function pintarProductos() {
@@ -62,17 +65,19 @@ function pintarProductos() {
     tarjeta.className = "tarjeta" + (agotado ? " es-agotado" : "");
     const enlace = esc(linkWA(ajustes.whatsapp, mensaje));
     const categoria = CATEGORIAS.find(c => c.id === p.categoria);
+    tarjeta.dataset.indice = productos.indexOf(p);
     tarjeta.style.animationDelay = `${Math.min(i, 8) * 60}ms`;
     tarjeta.innerHTML = `
       <div class="tarjeta-img">
         ${p.etiqueta ? `<span class="etiqueta${agotado ? " agotado" : ""}">${esc(p.etiqueta)}</span>` : ""}
+        <button class="tarjeta-ver" type="button" aria-label="Ver detalles de ${esc(p.nombre)}"><svg><use href="#i-mas"/></svg></button>
         <a class="tarjeta-rapido" href="${enlace}" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">
           <svg><use href="#i-wa"/></svg>${agotado ? "Avísame" : "Pedir ahora"}
         </a>
       </div>
       <div class="tarjeta-info">
         ${categoria ? `<span class="tarjeta-cat">${esc(categoria.nombre)}</span>` : ""}
-        <h3>${esc(p.nombre)}</h3>
+        <h3><button type="button" class="tarjeta-nombre">${esc(p.nombre)}</button></h3>
         ${p.descripcion ? `<p class="tarjeta-desc">${esc(p.descripcion)}</p>` : ""}
         ${p.medida ? `<span class="tarjeta-medida"><svg><use href="#i-regla"/></svg>${esc(p.medida)}</span>` : ""}
         <div class="precio">${formatoPrecio(p.precio)}</div>
@@ -85,17 +90,84 @@ function pintarProductos() {
   });
 }
 
+function elegirFiltro(cat) {
+  filtroActual = cat;
+  filtrosEl.querySelectorAll(".filtro").forEach(b => {
+    b.classList.toggle("activo", b.dataset.cat === cat);
+    if (b.dataset.cat === cat) b.scrollIntoView({ block: "nearest", inline: "center", behavior: "smooth" });
+  });
+  pintarProductos();
+}
+
 filtrosEl.addEventListener("click", e => {
   const btn = e.target.closest(".filtro");
   if (!btn) return;
-  filtroActual = btn.dataset.cat;
-  filtrosEl.querySelectorAll(".filtro").forEach(b => b.classList.toggle("activo", b === btn));
-  pintarProductos();
+  elegirFiltro(btn.dataset.cat);
+  // En el celular, si la lista quedó más arriba, sube hasta el inicio de los productos
+  const arriba = grilla.getBoundingClientRect().top;
+  if (arriba < 0) window.scrollBy({ top: arriba - filtrosEl.offsetHeight - header.offsetHeight - 12, behavior: "smooth" });
 });
 
+/* ---------- Menú del celular ---------- */
 const menuMovil = document.getElementById("menuMovil");
-document.getElementById("menuBtn").addEventListener("click", () => menuMovil.classList.toggle("abierto"));
-menuMovil.addEventListener("click", e => { if (e.target.tagName === "A") menuMovil.classList.remove("abierto"); });
+const menuBtn = document.getElementById("menuBtn");
+function abrirMenu(abrir) {
+  menuMovil.classList.toggle("abierto", abrir);
+  menuMovil.setAttribute("aria-hidden", String(!abrir));
+  menuBtn.setAttribute("aria-label", abrir ? "Cerrar menú" : "Abrir menú");
+  menuBtn.querySelector("use").setAttribute("href", abrir ? "#i-cerrar" : "#i-menu");
+  document.body.classList.toggle("sin-scroll", abrir);
+}
+menuBtn.addEventListener("click", () => abrirMenu(!menuMovil.classList.contains("abierto")));
+menuMovil.addEventListener("click", e => {
+  const enlace = e.target.closest("a");
+  if (!enlace) return;
+  if (enlace.dataset.cat) elegirFiltro(enlace.dataset.cat);
+  abrirMenu(false);
+});
+
+/* ---------- Vista de detalle del producto ---------- */
+const vista = document.getElementById("vistaRapida");
+function abrirVista(p) {
+  const agotado = (p.etiqueta || "").toLowerCase() === "agotado";
+  const cat = CATEGORIAS.find(c => c.id === p.categoria);
+  const img = document.getElementById("vrImg");
+  img.innerHTML = p.etiqueta ? `<span class="etiqueta${agotado ? " agotado" : ""}">${esc(p.etiqueta)}</span>` : "";
+  ponerImagen(img, p.imagen_url, p.nombre, semilla(p.id || p.nombre), 400, 500);
+  document.getElementById("vrCat").textContent = cat ? cat.nombre : "";
+  document.getElementById("vrNombre").textContent = p.nombre;
+  document.getElementById("vrDesc").textContent = p.descripcion || "";
+  const medida = document.getElementById("vrMedida");
+  medida.innerHTML = p.medida ? `<svg><use href="#i-regla"/></svg>${esc(p.medida)}` : "";
+  document.getElementById("vrPrecio").textContent = formatoPrecio(p.precio);
+  const mensaje = agotado
+    ? `Hola, ¿cuándo vuelve a estar disponible la ${p.nombre}?`
+    : `Hola, me interesa la ${p.nombre} - ${formatoPrecio(p.precio)}`;
+  document.getElementById("vrComprar").href = linkWA(ajustes.whatsapp, mensaje);
+  document.getElementById("vrComprarTexto").textContent = agotado ? "Avísame cuando llegue" : "Comprar por WhatsApp";
+  vista.hidden = false;
+  requestAnimationFrame(() => vista.classList.add("abierta"));
+  document.body.classList.add("sin-scroll");
+  vista.querySelector(".vr-cerrar").focus({ preventScroll: true });
+}
+function cerrarVista() {
+  if (vista.hidden) return;
+  vista.classList.remove("abierta");
+  document.body.classList.remove("sin-scroll");
+  setTimeout(() => { vista.hidden = true; }, 300);
+}
+grilla.addEventListener("click", e => {
+  if (e.target.closest(".tarjeta-rapido, .btn-wa")) return;
+  if (!e.target.closest(".tarjeta-img, .tarjeta-nombre")) return;
+  const p = productos[e.target.closest(".tarjeta").dataset.indice];
+  if (p) abrirVista(p);
+});
+vista.addEventListener("click", e => { if (e.target.closest("[data-cerrar]")) cerrarVista(); });
+document.addEventListener("keydown", e => {
+  if (e.key !== "Escape") return;
+  cerrarVista();
+  abrirMenu(false);
+});
 document.getElementById("anio").textContent = new Date().getFullYear();
 
 // El encabezado se compacta al bajar

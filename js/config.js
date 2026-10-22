@@ -26,7 +26,7 @@ export const ETIQUETAS = ["", "Nuevo", "Más vendida", "Agotado"];
 
 // Valores iniciales de la marca (luego se cambian desde el panel → Ajustes)
 export const AJUSTES_POR_DEFECTO = {
-  marca: "TU MARCA",
+  marca: "MAJO JOYERÍA",
   whatsapp: "573000000000",
   mensaje_general: "Hola, quiero información sobre sus manillas de oro laminado 18k.",
   instagram: "",
