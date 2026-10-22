@@ -10,8 +10,8 @@
    La clave "anon" es pública y es seguro ponerla aquí: la seguridad
    la dan las reglas del archivo supabase/esquema.sql.
    ================================================================ */
-export const SUPABASE_URL = "";
-export const SUPABASE_ANON_KEY = "";
+export const SUPABASE_URL = "https://ucytiuslgdnjmmfnaaed.supabase.co";
+export const SUPABASE_ANON_KEY = "sb_publishable_8Bin5R1xdGldvPjT1Oi_2A_T6PpUsV1";
 
 // Categorías que aparecen en los filtros del catálogo y en el panel
 export const CATEGORIAS = [
