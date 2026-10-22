@@ -150,3 +150,23 @@ dialog.modal::backdrop { background: rgba(0,0,0,.72); backdrop-filter: blur(3px)
   .form-grid { grid-template-columns: 1fr; }
   .herramientas .campo.chico { flex: 1; }
 }
+
+/* Fotos adicionales del producto */
+.extras { margin-top: 18px; }
+.extras-titulo { font-size: 12.5px; font-weight: 600; color: var(--dorado-claro); margin-bottom: 8px; }
+.extras-titulo small { color: var(--gris); font-weight: 400; }
+.extras-grilla { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.extra { position: relative; aspect-ratio: 1; border-radius: 8px; overflow: hidden; background: #100F0D; border: 1px solid var(--borde-suave); }
+.extra img { width: 100%; height: 100%; object-fit: cover; }
+.extra button {
+  position: absolute; top: 4px; right: 4px; width: 26px; height: 26px; border-radius: 50%;
+  display: grid; place-items: center; background: rgba(0,0,0,.75); border: 0; color: #fff;
+}
+.extra button svg { width: 14px; height: 14px; }
+.extra-mas {
+  aspect-ratio: 1; border-radius: 8px; border: 1px dashed var(--borde); background: transparent;
+  display: grid; place-items: center; color: var(--dorado); transition: border-color .2s;
+}
+.extra-mas:hover { border-color: var(--dorado); }
+.extra-mas svg { width: 22px; height: 22px; }
+.extras-ayuda { display: block; margin-top: 8px; font-size: 11.5px; color: var(--gris); line-height: 1.4; }

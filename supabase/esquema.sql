@@ -15,8 +15,12 @@ create table if not exists public.productos (
   imagen_url  text default '',
   visible     boolean not null default true,
   orden       integer not null default 0,
+  fotos       text[]  not null default '{}',   -- fotos adicionales (galería)
   created_at  timestamptz not null default now()
 );
+
+-- Para proyectos creados antes de la galería de fotos
+alter table public.productos add column if not exists fotos text[] not null default '{}';
 
 -- 2. Ajustes de la tienda (una sola fila) ----------------------------
 create table if not exists public.ajustes (

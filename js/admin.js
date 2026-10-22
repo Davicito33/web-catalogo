@@ -5,7 +5,7 @@ import { CATEGORIAS, ETIQUETAS } from "./config.js";
 import {
   modoDemo, demoPermitido, alCerrarseLaSesion, reiniciarDemo, obtenerAjustes, guardarAjustes,
   listarProductos, guardarProducto, eliminarProducto,
-  subirImagen, borrarImagen, obtenerSesion, iniciarSesion, cerrarSesion,
+  subirImagen, borrarImagen, MAX_FOTOS_EXTRA, obtenerSesion, iniciarSesion, cerrarSesion,
 } from "./datos.js";
 import { esc, formatoPrecio, soloDigitos, ponerImagen, semilla, aviso, insertarIconos } from "./util.js";
 
@@ -187,6 +187,30 @@ const modal = $("modalProducto");
 let editando = null;      // producto que se está editando (null = nuevo)
 let fotoNueva = null;     // archivo elegido y aún no subido
 let fotoQuitada = false;
+let fotosExtra = [];      // [{ url }] ya subidas o [{ archivo, vista }] nuevas
+
+function pintarExtras() {
+  const grilla = $("extrasGrilla");
+  grilla.innerHTML = fotosExtra.map((f, i) => `
+    <div class="extra"><img src="${esc(f.url || f.vista)}" alt="">
+      <button type="button" data-quitar-extra="${i}" aria-label="Quitar foto"><svg><use href="#i-cerrar"/></svg></button></div>`).join("") +
+    (fotosExtra.length < MAX_FOTOS_EXTRA
+      ? `<button type="button" class="extra-mas" id="btnMasFotos" aria-label="Agregar fotos"><svg><use href="#i-mas"/></svg></button>` : "");
+  $("extrasCuenta").textContent = `(${fotosExtra.length} de ${MAX_FOTOS_EXTRA})`;
+}
+$("extrasGrilla").addEventListener("click", e => {
+  if (e.target.closest("#btnMasFotos")) return $("archivoExtras").click();
+  const quitar = e.target.closest("[data-quitar-extra]");
+  if (quitar) { fotosExtra.splice(Number(quitar.dataset.quitarExtra), 1); pintarExtras(); }
+});
+$("archivoExtras").addEventListener("change", e => {
+  const archivos = [...e.target.files].filter(a => a.type.startsWith("image/"));
+  const libres = MAX_FOTOS_EXTRA - fotosExtra.length;
+  if (archivos.length > libres) aviso(`Solo caben ${MAX_FOTOS_EXTRA} fotos adicionales; se agregaron las primeras ${libres}.`);
+  archivos.slice(0, libres).forEach(archivo => fotosExtra.push({ archivo, vista: URL.createObjectURL(archivo) }));
+  e.target.value = "";
+  pintarExtras();
+});
 
 function mostrarFoto(zona, src, variante) {
   zona.querySelectorAll("img, :scope > svg").forEach(n => n.remove());
@@ -207,6 +231,8 @@ function abrirFormulario(p = null) {
   $("pOrden").value = p?.orden ?? (Math.max(0, ...productos.map(x => x.orden || 0)) + 1);
   $("pVisible").checked = p ? p.visible !== false : true;
   $("archivoFoto").value = "";
+  fotosExtra = (p?.fotos || []).map(url => ({ url }));
+  pintarExtras();
   mostrarFoto($("zonaFoto"), p?.imagen_url, semilla(p?.id || "nuevo"));
   modal.showModal();
   if (!p) $("pNombre").focus();
@@ -255,12 +281,17 @@ $("formProducto").addEventListener("submit", async e => {
 
   const boton = $("btnGuardarProducto");
   boton.disabled = true;
-  boton.textContent = fotoNueva ? "Subiendo foto…" : "Guardando…";
+  const porSubir = (fotoNueva ? 1 : 0) + fotosExtra.filter(f => f.archivo).length;
+  boton.textContent = porSubir ? `Subiendo ${porSubir} foto${porSubir > 1 ? "s" : ""}…` : "Guardando…";
   try {
     const fotoAnterior = editando?.imagen_url || "";
     let imagen_url = fotoAnterior;
     if (fotoNueva) imagen_url = await subirImagen(fotoNueva);
     else if (fotoQuitada) imagen_url = "";
+
+    const fotos = [];
+    for (const f of fotosExtra) fotos.push(f.url || await subirImagen(f.archivo));
+    const extrasAnteriores = editando?.fotos || [];
 
     await guardarProducto({
       id: editando?.id,
@@ -273,9 +304,11 @@ $("formProducto").addEventListener("submit", async e => {
       orden: Number($("pOrden").value) || 0,
       visible: $("pVisible").checked,
       imagen_url,
+      fotos,
     });
 
     if (fotoAnterior && fotoAnterior !== imagen_url) borrarImagen(fotoAnterior).catch(() => {});
+    extrasAnteriores.filter(url => !fotos.includes(url)).forEach(url => borrarImagen(url).catch(() => {}));
     cerrarFormulario();
     aviso(editando ? "Cambios guardados" : "Producto agregado al catálogo");
     await cargarProductos();

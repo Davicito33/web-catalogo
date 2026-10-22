@@ -479,3 +479,95 @@ body.sin-scroll { overflow: hidden; }
 .menu-movil .btn-dorado { display: flex; gap: 12px; }
 body.sin-scroll .wa-flotante { opacity: 0; pointer-events: none; }
 .vr-info .precio::after { display: none; }
+
+/* ================================================================
+   GALERÍA DE FOTOS EN EL DETALLE + SEGUNDA FOTO EN LA TARJETA
+   ================================================================ */
+.vr-img { display: block; }
+.vr-pista {
+  position: absolute; inset: 0; display: flex; overflow-x: auto; scroll-snap-type: x mandatory;
+  scrollbar-width: none; overscroll-behavior-x: contain;
+}
+.vr-pista::-webkit-scrollbar { display: none; }
+.vr-foto { position: relative; flex: 0 0 100%; scroll-snap-align: center; }
+.vr-foto svg, .vr-foto img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.vr-img .etiqueta { z-index: 3; }
+.vr-flecha {
+  position: absolute; top: 50%; z-index: 3; width: 42px; height: 42px; margin-top: -21px; border-radius: 50%;
+  display: grid; place-items: center; background: rgba(10,9,8,.7); border: 1px solid var(--borde); color: var(--dorado-claro);
+  transition: background .3s, color .3s;
+}
+.vr-flecha:hover { background: var(--dorado); color: #1A1407; }
+.vr-flecha svg { width: 16px; height: 16px; }
+.vr-flecha.ant { left: 14px; } .vr-flecha.ant svg { transform: scaleX(-1); }
+.vr-flecha.sig { right: 14px; }
+.vr-puntos { position: absolute; left: 0; right: 0; bottom: 14px; z-index: 3; display: flex; justify-content: center; gap: 4px; }
+.vr-puntos button { width: 22px; height: 22px; background: none; border: 0; display: grid; place-items: center; padding: 0; }
+.vr-puntos button::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: rgba(245,241,232,.4); transition: background .3s, transform .3s; }
+.vr-puntos button.activo::before { background: var(--dorado-claro); transform: scale(1.35); }
+.vr-compartir {
+  display: inline-flex; align-items: center; gap: 8px; margin-top: 18px; padding: 8px 0;
+  background: none; border: 0; color: var(--dorado-claro); font-size: 11px; letter-spacing: .2em; text-transform: uppercase;
+  border-bottom: 1px solid var(--borde); transition: color .3s, border-color .3s;
+}
+.vr-compartir:hover { color: var(--crema); border-color: var(--dorado); }
+
+.tarjeta-img .img-segunda { z-index: 1; opacity: 0; transition: opacity .6s ease, transform 1.2s cubic-bezier(.2,.7,.2,1); }
+@media (hover: hover) { .tarjeta:hover .img-segunda { opacity: 1; } }
+.tarjeta-fotos {
+  position: absolute; left: 12px; bottom: 12px; z-index: 2; font-size: 9px; letter-spacing: .2em; text-transform: uppercase;
+  color: var(--dorado-claro); background: rgba(10,9,8,.7); padding: 5px 9px; border: 1px solid var(--borde-suave);
+}
+@media (hover: hover) { .tarjeta:hover .tarjeta-fotos { opacity: 0; } }
+
+/* ================================================================
+   CÓMO COMPRAR + PREGUNTAS FRECUENTES
+   ================================================================ */
+.como-comprar { padding-block: 100px; border-top: 1px solid var(--borde-suave); scroll-margin-top: 70px; }
+.pasos { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin-top: 10px; counter-reset: paso; }
+.paso { position: relative; text-align: center; padding: 10px 26px; }
+.paso + .paso { border-left: 1px solid var(--borde-suave); }
+.paso-num {
+  display: grid; place-items: center; width: 58px; height: 58px; margin: 0 auto 20px; border-radius: 50%;
+  border: 1px solid var(--borde); font-family: var(--fuente-titulos); font-size: 26px; color: var(--dorado-claro);
+}
+.paso h3 { font-family: var(--fuente-titulos); font-weight: 400; font-size: 24px; margin-bottom: 8px; }
+.paso p { font-size: 13.5px; color: var(--gris); font-weight: 300; line-height: 1.7; }
+
+.faq { padding-block: 0 110px; }
+.faq .titulo-seccion { margin-bottom: 34px; }
+.preguntas { max-width: 780px; margin-inline: auto; border-top: 1px solid var(--borde-suave); }
+.preguntas details { border-bottom: 1px solid var(--borde-suave); }
+.preguntas summary {
+  list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 20px;
+  padding: 22px 4px; font-family: var(--fuente-titulos); font-size: 22px; font-weight: 400; transition: color .3s;
+}
+.preguntas summary::-webkit-details-marker { display: none; }
+.preguntas summary::after {
+  content: ""; flex-shrink: 0; width: 11px; height: 11px; margin-right: 6px;
+  border-right: 1px solid var(--dorado); border-bottom: 1px solid var(--dorado);
+  transform: rotate(45deg) translateY(-3px); transition: transform .35s;
+}
+.preguntas details[open] summary::after { transform: rotate(225deg) translateY(-3px); }
+.preguntas summary:hover, .preguntas details[open] summary { color: var(--dorado-claro); }
+.preguntas details p { padding: 0 4px 24px; color: #CFC8B8; font-weight: 300; font-size: 14.5px; line-height: 1.8; max-width: 680px; }
+.faq-mas { text-align: center; margin-top: 36px; color: var(--gris); font-size: 14px; font-weight: 300; }
+.faq-mas a { color: var(--dorado-claro); border-bottom: 1px solid var(--borde); padding-bottom: 2px; }
+
+@media (max-width: 960px) {
+  .pasos { grid-template-columns: repeat(2, 1fr); row-gap: 40px; }
+  .paso:nth-child(3) { border-left: 0; }
+}
+@media (max-width: 760px) {
+  .vr-flecha { display: none; }
+  .como-comprar { padding-block: 72px; }
+  .pasos { grid-template-columns: 1fr; row-gap: 0; }
+  .paso { display: grid; grid-template-columns: 48px 1fr; gap: 0 16px; text-align: left; padding: 18px 0; }
+  .paso + .paso { border-left: 0; border-top: 1px solid var(--borde-suave); }
+  .paso-num { grid-row: span 2; width: 46px; height: 46px; margin: 0; font-size: 21px; }
+  .paso h3 { font-size: 21px; margin-bottom: 2px; }
+  .faq { padding-bottom: 80px; }
+  .preguntas summary { font-size: 19px; padding: 18px 2px; }
+}
+.pasos { list-style: none; padding: 0; }
+.vr-flecha svg { position: static; inset: auto; width: 16px; height: 16px; }

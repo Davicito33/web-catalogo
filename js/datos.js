@@ -18,7 +18,8 @@ const MSG_DEMO_BLOQUEADO = "El panel está cerrado: conecta Supabase para poder 
 const MSG_NO_ADMIN = "Esta cuenta no tiene permiso de administrador.";
 
 const BUCKET = "productos";
-const CAMPOS_PRODUCTO = ["nombre", "descripcion", "precio", "medida", "categoria", "etiqueta", "imagen_url", "visible", "orden"];
+const CAMPOS_PRODUCTO = ["nombre", "descripcion", "precio", "medida", "categoria", "etiqueta", "imagen_url", "fotos", "visible", "orden"];
+export const MAX_FOTOS_EXTRA = 5;
 const CAMPOS_AJUSTES = Object.keys(AJUSTES_POR_DEFECTO);
 const elegir = (obj, campos) => Object.fromEntries(campos.filter(c => c in obj).map(c => [c, obj[c]]));
 
@@ -39,6 +40,7 @@ function traducirError(msg = "") {
   if (/Invalid login credentials/i.test(msg)) return "Correo o contraseña incorrectos.";
   if (/Email not confirmed/i.test(msg)) return "Debes confirmar tu correo antes de entrar.";
   if (/row-level security|permission denied/i.test(msg)) return "No tienes permiso para hacer esto. ¿Tu usuario está registrado como administrador?";
+  if (/fotos/i.test(msg) && /column|schema cache/i.test(msg)) return "Falta activar la galería de fotos en Supabase: ejecuta el SQL de la columna \"fotos\" y vuelve a intentar.";
   if (/Failed to fetch|NetworkError/i.test(msg)) return "Sin conexión. Revisa tu internet e inténtalo de nuevo.";
   return msg || "Ocurrió un error inesperado.";
 }
@@ -114,7 +116,7 @@ export async function eliminarProducto(producto) {
   }
   const s = await cliente();
   revisar(await s.from("productos").delete().eq("id", producto.id));
-  await borrarImagen(producto.imagen_url);
+  for (const url of [producto.imagen_url, ...(producto.fotos || [])]) await borrarImagen(url).catch(() => {});
 }
 
 /* ---------- Fotos ---------- */

@@ -3,7 +3,7 @@
    ================================================================ */
 import { CATEGORIAS } from "./config.js";
 import { obtenerAjustes, listarProductos } from "./datos.js";
-import { esc, formatoPrecio, linkWA, ponerImagen, semilla, insertarIconos } from "./util.js";
+import { esc, formatoPrecio, linkWA, ponerImagen, semilla, insertarIconos, aviso } from "./util.js";
 
 insertarIconos();
 
@@ -86,6 +86,13 @@ function pintarProductos() {
         </a>
       </div>`;
     ponerImagen(tarjeta.querySelector(".tarjeta-img"), p.imagen_url, p.nombre, semilla(p.id || p.nombre), 400, 500);
+    // En computador, al pasar el mouse se muestra la segunda foto
+    if (p.fotos?.length) {
+      tarjeta.querySelector(".tarjeta-img").insertAdjacentHTML("beforeend",
+        `<img class="img-segunda" src="${esc(p.fotos[0])}" alt="" loading="lazy">`);
+      tarjeta.querySelector(".tarjeta-img").insertAdjacentHTML("beforeend",
+        `<span class="tarjeta-fotos">${p.fotos.length + 1} fotos</span>`);
+    }
     grilla.appendChild(tarjeta);
   });
 }
@@ -126,14 +133,48 @@ menuMovil.addEventListener("click", e => {
   abrirMenu(false);
 });
 
-/* ---------- Vista de detalle del producto ---------- */
+/* ---------- Vista de detalle del producto (galería, enlace directo y compartir) ---------- */
 const vista = document.getElementById("vistaRapida");
-function abrirVista(p) {
+const vrImg = document.getElementById("vrImg");
+let productoAbierto = null;
+const HASH = "#producto-";
+
+function armarGaleria(p, agotado) {
+  const fotos = [p.imagen_url || "", ...(p.fotos || [])];
+  vrImg.innerHTML = `
+    ${p.etiqueta ? `<span class="etiqueta${agotado ? " agotado" : ""}">${esc(p.etiqueta)}</span>` : ""}
+    <div class="vr-pista">${fotos.map(() => `<div class="vr-foto"></div>`).join("")}</div>
+    ${fotos.length > 1 ? `
+      <button class="vr-flecha ant" type="button" aria-label="Foto anterior"><svg><use href="#i-flecha"/></svg></button>
+      <button class="vr-flecha sig" type="button" aria-label="Foto siguiente"><svg><use href="#i-flecha"/></svg></button>
+      <div class="vr-puntos">${fotos.map((_, i) => `<button type="button" data-foto="${i}" aria-label="Ver foto ${i + 1}"${i ? "" : ' class="activo"'}></button>`).join("")}</div>` : ""}`;
+  vrImg.querySelectorAll(".vr-foto").forEach((celda, i) =>
+    ponerImagen(celda, fotos[i], `${p.nombre} - foto ${i + 1}`, semilla(p.id || p.nombre), 400, 500));
+}
+const pista = () => vrImg.querySelector(".vr-pista");
+function irAFoto(i) {
+  const el = pista(); if (!el) return;
+  el.scrollTo({ left: i * el.clientWidth, behavior: "smooth" });
+}
+vrImg.addEventListener("scroll", e => {
+  if (!e.target.classList?.contains("vr-pista")) return;
+  const i = Math.round(e.target.scrollLeft / e.target.clientWidth);
+  vrImg.querySelectorAll(".vr-puntos button").forEach((b, k) => b.classList.toggle("activo", k === i));
+}, true);
+vrImg.addEventListener("click", e => {
+  const el = pista(); if (!el) return;
+  const actual = Math.round(el.scrollLeft / el.clientWidth);
+  const total = el.children.length;
+  if (e.target.closest(".vr-flecha.sig")) irAFoto((actual + 1) % total);
+  else if (e.target.closest(".vr-flecha.ant")) irAFoto((actual - 1 + total) % total);
+  else if (e.target.closest("[data-foto]")) irAFoto(Number(e.target.closest("[data-foto]").dataset.foto));
+});
+
+function abrirVista(p, { desdeEnlace = false } = {}) {
+  productoAbierto = p;
   const agotado = (p.etiqueta || "").toLowerCase() === "agotado";
   const cat = CATEGORIAS.find(c => c.id === p.categoria);
-  const img = document.getElementById("vrImg");
-  img.innerHTML = p.etiqueta ? `<span class="etiqueta${agotado ? " agotado" : ""}">${esc(p.etiqueta)}</span>` : "";
-  ponerImagen(img, p.imagen_url, p.nombre, semilla(p.id || p.nombre), 400, 500);
+  armarGaleria(p, agotado);
   document.getElementById("vrCat").textContent = cat ? cat.nombre : "";
   document.getElementById("vrNombre").textContent = p.nombre;
   document.getElementById("vrDesc").textContent = p.descripcion || "";
@@ -142,20 +183,50 @@ function abrirVista(p) {
   document.getElementById("vrPrecio").textContent = formatoPrecio(p.precio);
   const mensaje = agotado
     ? `Hola, ¿cuándo vuelve a estar disponible la ${p.nombre}?`
-    : `Hola, me interesa la ${p.nombre} - ${formatoPrecio(p.precio)}`;
+    : `Hola, me interesa la ${p.nombre} - ${formatoPrecio(p.precio)}\n${enlaceProducto(p)}`;
   document.getElementById("vrComprar").href = linkWA(ajustes.whatsapp, mensaje);
   document.getElementById("vrComprarTexto").textContent = agotado ? "Avísame cuando llegue" : "Comprar por WhatsApp";
+  // La dirección de la página cambia para poder compartir este producto (y el botón "atrás" lo cierra)
+  if (!desdeEnlace) history.pushState({ vista: true }, "", HASH + p.id);
+  document.title = `${p.nombre} · ${ajustes.marca}`;
   vista.hidden = false;
   requestAnimationFrame(() => vista.classList.add("abierta"));
   document.body.classList.add("sin-scroll");
   vista.querySelector(".vr-cerrar").focus({ preventScroll: true });
 }
-function cerrarVista() {
+function ocultarVista() {
   if (vista.hidden) return;
+  productoAbierto = null;
+  document.title = `${ajustes.marca} · Manillas de oro laminado 18k`;
   vista.classList.remove("abierta");
   document.body.classList.remove("sin-scroll");
-  setTimeout(() => { vista.hidden = true; }, 300);
+  setTimeout(() => { if (!productoAbierto) vista.hidden = true; }, 300);
 }
+function cerrarVista() {
+  if (vista.hidden) return;
+  if (history.state?.vista) history.back();          // quita el #producto de la dirección
+  else { history.replaceState(null, "", location.pathname + location.search); ocultarVista(); }
+}
+window.addEventListener("popstate", () => {
+  if (location.hash.startsWith(HASH)) abrirDesdeEnlace();
+  else ocultarVista();
+});
+function abrirDesdeEnlace() {
+  const id = decodeURIComponent(location.hash.slice(HASH.length));
+  const p = productos.find(x => String(x.id) === id);
+  if (p) abrirVista(p, { desdeEnlace: true });
+}
+const enlaceProducto = p => `${location.origin}${location.pathname}${HASH}${p.id}`;
+
+document.getElementById("vrCompartir").addEventListener("click", async () => {
+  const p = productoAbierto; if (!p) return;
+  const datos = { title: `${p.nombre} · ${ajustes.marca}`, text: `${p.nombre} - ${formatoPrecio(p.precio)}`, url: enlaceProducto(p) };
+  try {
+    if (navigator.share) await navigator.share(datos);
+    else { await navigator.clipboard.writeText(datos.url); aviso("Enlace copiado. Pégalo donde quieras compartirlo."); }
+  } catch (e) { if (e.name !== "AbortError") aviso("No se pudo compartir. Copia la dirección de la página.", "error"); }
+});
+
 grilla.addEventListener("click", e => {
   if (e.target.closest(".tarjeta-rapido, .btn-wa")) return;
   if (!e.target.closest(".tarjeta-img, .tarjeta-nombre")) return;
@@ -164,9 +235,10 @@ grilla.addEventListener("click", e => {
 });
 vista.addEventListener("click", e => { if (e.target.closest("[data-cerrar]")) cerrarVista(); });
 document.addEventListener("keydown", e => {
-  if (e.key !== "Escape") return;
-  cerrarVista();
-  abrirMenu(false);
+  if (e.key === "Escape") { cerrarVista(); abrirMenu(false); }
+  if (!vista.hidden && pista() && (e.key === "ArrowRight" || e.key === "ArrowLeft")) {
+    vrImg.querySelector(e.key === "ArrowRight" ? ".vr-flecha.sig" : ".vr-flecha.ant")?.click();
+  }
 });
 document.getElementById("anio").textContent = new Date().getFullYear();
 
@@ -182,7 +254,7 @@ const observador = "IntersectionObserver" in window
       if (e.isIntersecting) { e.target.classList.add("visible"); observador.unobserve(e.target); }
     }), { threshold: 0.15 })
   : null;
-document.querySelectorAll(".beneficios, .titulo-seccion, .manifiesto .contenedor").forEach(el => {
+document.querySelectorAll(".beneficios, .titulo-seccion, .pasos, .preguntas, .manifiesto .contenedor").forEach(el => {
   if (!observador) return;
   el.classList.add("revelar");
   observador.observe(el);
@@ -194,6 +266,7 @@ async function iniciar() {
     aplicarAjustes();
     pintarFiltros();
     pintarProductos();
+    if (location.hash.startsWith(HASH)) abrirDesdeEnlace();   // alguien abrió el enlace de un producto
   } catch (error) {
     console.error(error);
     grilla.classList.remove("cargando");
