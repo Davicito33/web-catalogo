@@ -549,3 +549,12 @@ body.sin-scroll .wa-flotante { opacity: 0; pointer-events: none; }
 }
 .pasos { list-style: none; padding: 0; }
 .vr-flecha svg { position: static; inset: auto; width: 16px; height: 16px; }
+
+/* Íconos de los botones sobre la foto: centrados y sin el efecto de zoom de la imagen */
+.tarjeta-img .tarjeta-ver svg, .tarjeta-img .tarjeta-rapido svg,
+.tarjeta:hover .tarjeta-img .tarjeta-ver svg, .tarjeta:hover .tarjeta-img .tarjeta-rapido svg {
+  position: static; inset: auto; width: 16px; height: 16px; transform: none; flex-shrink: 0;
+}
+@media (max-width: 760px) {
+  .tarjeta-img .tarjeta-ver svg { width: 14px; height: 14px; }
+}
