@@ -254,7 +254,7 @@ const observador = "IntersectionObserver" in window
       if (e.isIntersecting) { e.target.classList.add("visible"); observador.unobserve(e.target); }
     }), { threshold: 0.15 })
   : null;
-document.querySelectorAll(".beneficios, .titulo-seccion, .pasos, .preguntas, .manifiesto .contenedor").forEach(el => {
+document.querySelectorAll(".beneficios, .titulo-seccion, .pasos, .manifiesto .contenedor").forEach(el => {
   if (!observador) return;
   el.classList.add("revelar");
   observador.observe(el);

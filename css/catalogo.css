@@ -521,7 +521,7 @@ body.sin-scroll .wa-flotante { opacity: 0; pointer-events: none; }
 @media (hover: hover) { .tarjeta:hover .tarjeta-fotos { opacity: 0; } }
 
 /* ================================================================
-   CÓMO COMPRAR + PREGUNTAS FRECUENTES
+   CÓMO COMPRAR
    ================================================================ */
 .como-comprar { padding-block: 100px; border-top: 1px solid var(--borde-suave); scroll-margin-top: 70px; }
 .pasos { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin-top: 10px; counter-reset: paso; }
@@ -533,26 +533,6 @@ body.sin-scroll .wa-flotante { opacity: 0; pointer-events: none; }
 }
 .paso h3 { font-family: var(--fuente-titulos); font-weight: 400; font-size: 24px; margin-bottom: 8px; }
 .paso p { font-size: 13.5px; color: var(--gris); font-weight: 300; line-height: 1.7; }
-
-.faq { padding-block: 0 110px; }
-.faq .titulo-seccion { margin-bottom: 34px; }
-.preguntas { max-width: 780px; margin-inline: auto; border-top: 1px solid var(--borde-suave); }
-.preguntas details { border-bottom: 1px solid var(--borde-suave); }
-.preguntas summary {
-  list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 20px;
-  padding: 22px 4px; font-family: var(--fuente-titulos); font-size: 22px; font-weight: 400; transition: color .3s;
-}
-.preguntas summary::-webkit-details-marker { display: none; }
-.preguntas summary::after {
-  content: ""; flex-shrink: 0; width: 11px; height: 11px; margin-right: 6px;
-  border-right: 1px solid var(--dorado); border-bottom: 1px solid var(--dorado);
-  transform: rotate(45deg) translateY(-3px); transition: transform .35s;
-}
-.preguntas details[open] summary::after { transform: rotate(225deg) translateY(-3px); }
-.preguntas summary:hover, .preguntas details[open] summary { color: var(--dorado-claro); }
-.preguntas details p { padding: 0 4px 24px; color: #CFC8B8; font-weight: 300; font-size: 14.5px; line-height: 1.8; max-width: 680px; }
-.faq-mas { text-align: center; margin-top: 36px; color: var(--gris); font-size: 14px; font-weight: 300; }
-.faq-mas a { color: var(--dorado-claro); border-bottom: 1px solid var(--borde); padding-bottom: 2px; }
 
 @media (max-width: 960px) {
   .pasos { grid-template-columns: repeat(2, 1fr); row-gap: 40px; }
@@ -566,8 +546,6 @@ body.sin-scroll .wa-flotante { opacity: 0; pointer-events: none; }
   .paso + .paso { border-left: 0; border-top: 1px solid var(--borde-suave); }
   .paso-num { grid-row: span 2; width: 46px; height: 46px; margin: 0; font-size: 21px; }
   .paso h3 { font-size: 21px; margin-bottom: 2px; }
-  .faq { padding-bottom: 80px; }
-  .preguntas summary { font-size: 19px; padding: 18px 2px; }
 }
 .pasos { list-style: none; padding: 0; }
 .vr-flecha svg { position: static; inset: auto; width: 16px; height: 16px; }
