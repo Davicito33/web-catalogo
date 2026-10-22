@@ -9,6 +9,14 @@ import { PRODUCTOS_DEMO } from "./demo.js";
 
 export const modoDemo = !(SUPABASE_URL && SUPABASE_ANON_KEY);
 
+// El modo demo solo abre el panel en tu computador (Live Server).
+// En la página publicada, el panel queda bloqueado hasta conectar Supabase.
+const HOST = location.hostname;
+export const demoPermitido = modoDemo &&
+  (location.protocol === "file:" || HOST === "localhost" || HOST === "127.0.0.1" || HOST === "[::1]");
+const MSG_DEMO_BLOQUEADO = "El panel está cerrado: conecta Supabase para poder iniciar sesión desde internet.";
+const MSG_NO_ADMIN = "Esta cuenta no tiene permiso de administrador.";
+
 const BUCKET = "productos";
 const CAMPOS_PRODUCTO = ["nombre", "descripcion", "precio", "medida", "categoria", "etiqueta", "imagen_url", "visible", "orden"];
 const CAMPOS_AJUSTES = Object.keys(AJUSTES_POR_DEFECTO);
@@ -159,18 +167,41 @@ export async function borrarImagen(url) {
 }
 
 /* ---------- Sesión del administrador ---------- */
+// Pregunta a la base de datos si el usuario conectado está en la tabla de administradores
+async function esAdmin(s) {
+  const { data, error } = await s.rpc("es_admin");
+  return !error && data === true;
+}
+
 export async function obtenerSesion() {
-  if (modoDemo) return { usuario: "Modo demo", demo: true };
+  if (modoDemo) return demoPermitido ? { usuario: "Modo demo", demo: true } : null;
   const s = await cliente();
-  const { data } = await s.auth.getSession();
-  return data.session ? { usuario: data.session.user.email } : null;
+  // getUser() valida la sesión con el servidor (no se fía solo de lo guardado en el navegador)
+  const { data, error } = await s.auth.getUser();
+  if (error || !data.user) return null;
+  if (!(await esAdmin(s))) { await s.auth.signOut(); return null; }
+  return { usuario: data.user.email };
 }
 
 export async function iniciarSesion(correo, clave) {
-  if (modoDemo) return { usuario: "Modo demo", demo: true };
+  if (modoDemo) {
+    if (!demoPermitido) throw new Error(MSG_DEMO_BLOQUEADO);
+    return { usuario: "Modo demo", demo: true };
+  }
   const s = await cliente();
   const data = revisar(await s.auth.signInWithPassword({ email: correo, password: clave }));
+  if (!(await esAdmin(s))) {
+    await s.auth.signOut();
+    throw new Error(MSG_NO_ADMIN);
+  }
   return { usuario: data.user.email };
+}
+
+// Si la sesión se cierra o vence mientras el panel está abierto, se avisa al panel
+export async function alCerrarseLaSesion(accion) {
+  if (modoDemo) return;
+  const s = await cliente();
+  s.auth.onAuthStateChange(evento => { if (evento === "SIGNED_OUT") accion(); });
 }
 
 export async function cerrarSesion() {

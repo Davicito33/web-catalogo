@@ -3,7 +3,7 @@
    ================================================================ */
 import { CATEGORIAS, ETIQUETAS } from "./config.js";
 import {
-  modoDemo, reiniciarDemo, obtenerAjustes, guardarAjustes,
+  modoDemo, demoPermitido, alCerrarseLaSesion, reiniciarDemo, obtenerAjustes, guardarAjustes,
   listarProductos, guardarProducto, eliminarProducto,
   subirImagen, borrarImagen, obtenerSesion, iniciarSesion, cerrarSesion,
 } from "./datos.js";
@@ -26,7 +26,16 @@ async function arrancar() {
 
   const sesion = await obtenerSesion().catch(() => null);
   if (sesion) entrarAlPanel(sesion);
-  else $("vistaLogin").classList.remove("oculto");
+  else mostrarLogin();
+}
+
+function mostrarLogin() {
+  $("vistaPanel").classList.add("oculto");
+  $("vistaLogin").classList.remove("oculto");
+  if (modoDemo && !demoPermitido) {
+    $("loginError").textContent = "El panel está cerrado: conecta Supabase para poder iniciar sesión desde internet.";
+    $("formLogin").querySelectorAll("input, button").forEach(el => el.disabled = true);
+  }
 }
 
 function pintarMarca() {
@@ -56,6 +65,7 @@ $("btnSalir").addEventListener("click", async () => {
 });
 
 async function entrarAlPanel(sesion) {
+  alCerrarseLaSesion(() => location.reload());
   $("vistaPanel").classList.remove("oculto");
   $("usuario").textContent = sesion.usuario;
   $("avisoDemo").classList.toggle("oculto", !modoDemo);
