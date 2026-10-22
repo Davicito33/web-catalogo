@@ -1,0 +1,9 @@
+# Archivos que NO se publican en la web
+.git
+.github
+.wrangler
+node_modules
+wrangler.jsonc
+.assetsignore
+README.md
+supabase

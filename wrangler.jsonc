@@ -1,0 +1,8 @@
+// Configuración para publicar la web en Cloudflare (sitio estático, sin servidor)
+{
+  "name": "majo-joyeria",
+  "compatibility_date": "2026-06-01",
+  "assets": {
+    "directory": "./"
+  }
+}
